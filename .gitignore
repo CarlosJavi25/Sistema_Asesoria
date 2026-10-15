@@ -1,0 +1,45 @@
+# ───────── .NET ─────────
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userprefs
+TestResults/
+
+# ───────── Base de datos local ─────────
+backend/data/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# ───────── Secretos ─────────
+.env
+.env.*
+!.env.example
+appsettings.Production.json
+appsettings.*.local.json
+
+# ───────── Node (web y mobile) ─────────
+node_modules/
+dist/
+build/
+.expo/
+
+# ───────── React Native ─────────
+mobile/android/build/
+mobile/android/app/build/
+mobile/android/.gradle/
+mobile/ios/Pods/
+mobile/ios/build/
+
+# ───────── Editores y sistema ─────────
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+.DS_Store
+Thumbs.db

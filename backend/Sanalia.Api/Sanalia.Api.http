@@ -1,0 +1,6 @@
+@Sanalia.Api_HostAddress = http://localhost:5099
+
+GET {{Sanalia.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
