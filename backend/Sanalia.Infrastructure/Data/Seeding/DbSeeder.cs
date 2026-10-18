@@ -138,8 +138,7 @@ public class DataSeeder(SanaliaDbContext db, IPasswordHasher hasher) : IDataSeed
             DocumentoIdentidad = "00100000001",
             Telefono = "809-555-0201",
             Correo = "cliente1@demo.local",
-            Contraseña = _hasher.Hash(ClaveCliente),
-            Presupuesto = 3_000
+            Contraseña = _hasher.Hash(ClaveCliente)
         };
         var cliente2 = new Cliente
         {
@@ -147,8 +146,7 @@ public class DataSeeder(SanaliaDbContext db, IPasswordHasher hasher) : IDataSeed
             DocumentoIdentidad = "00100000002",
             Telefono = "809-555-0202",
             Correo = "cliente2@demo.local",
-            Contraseña = _hasher.Hash(ClaveCliente),
-            Presupuesto = 5_000
+            Contraseña = _hasher.Hash(ClaveCliente)
         };
 
         // Horarios: los próximos 5 días laborables, 4 franjas por día.
@@ -180,7 +178,8 @@ public class DataSeeder(SanaliaDbContext db, IPasswordHasher hasher) : IDataSeed
         {
             Cliente = cliente1,
             TipoSeguro = tipoVehiculos,
-            DescripcionNecesidad = "Necesito asegurar mi vehículo. Tengo un presupuesto de RD$3,000 al mes.",
+            DescripcionNecesidad = "Necesito asegurar mi vehículo.",
+            Presupuesto = 3_000,
             Horario = horarios[0],
             Estado = EstadoSolicitudAsesoria.Pendiente
         };

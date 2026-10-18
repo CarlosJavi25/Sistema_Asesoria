@@ -4,6 +4,8 @@ using Sanalia.Core.Interfaces;
 using Sanalia.Infrastructure.Data.Security;
 using Sanalia.Infrastructure.Data.Seeding;
 using Sanalia.Infrastructure.Repositories;
+using Sanalia.Infrastructure.Services;
+using Sanalia.Core.Interfaces.IServices;
 
 namespace Sanalia.Infrastructure.Data.Context;
 
@@ -61,6 +63,14 @@ public static class DI
 
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IDataSeeder, DataSeeder>();
+
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IProductoSeguroService, ProductoSeguroService>();
+        services.AddScoped<IHorarioDisponibleService, HorarioDisponibleService>();
+        services.AddScoped<ISolicitudAsesoriaService, SolicitudAsesoriaService>();
+        services.AddScoped<ISolicitudAsistenciaService, SolicitudAsistenciaService>();
+        services.AddScoped<IAsesoriaService, AsesoriaService>();
+        services.AddScoped<ICotizacionService, CotizacionService>();
 
         return services;
     }

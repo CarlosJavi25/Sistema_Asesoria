@@ -9,6 +9,7 @@ public class SolicitudAsesoria
     public int ClienteId { get; set; }
     public int TipoId { get; set; }
     public string? DescripcionNecesidad { get; set; }
+    public decimal? Presupuesto { get; set; }
 
     /// <summary>Horario reservado. Es único: un horario no puede ser tomado por dos solicitudes.</summary>
     public int? HorarioId { get; set; }
