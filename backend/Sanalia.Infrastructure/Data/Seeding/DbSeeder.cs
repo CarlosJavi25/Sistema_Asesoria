@@ -1,22 +1,21 @@
-using System;
-using System.Data;
 using Sanalia.Core.Entities;
 using Sanalia.Core.Enums;
 using Sanalia.Core.Interfaces;
 using Sanalia.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Sanalia.Infrastructure.Data.Seeding;
 
-public class DataSeeder(SanaliaDbContext db, IPasswordHasher hasher) : IDataSeeder
+public class DataSeeder(
+    SanaliaDbContext db,
+    IPasswordHasher hasher,
+    IOptions<DemoSeedCredentials> credentials) : IDataSeeder
 {
     // SOLO DESARROLLO. El seeder se ejecuta únicamente en el entorno Development (ver Program.cs).
-    private const string ClaveAdmin = "Admin123!";
-    private const string ClaveAsesor = "Asesor123!";
-    private const string ClaveCliente = "Cliente123!";
-
     private readonly SanaliaDbContext _db = db;
     private readonly IPasswordHasher _hasher = hasher;
+    private readonly DemoSeedCredentials _credentials = credentials.Value;
 
     public async Task SeedAsync(CancellationToken ct = default)
     {
@@ -35,12 +34,13 @@ public class DataSeeder(SanaliaDbContext db, IPasswordHasher hasher) : IDataSeed
 
     private async Task SeedAsesoresAsync(CancellationToken ct)
     {
+        _credentials.ValidateAdminAndAdvisor();
         _db.Asesores.AddRange(
             new Asesor
             {
                 Nombre = "Administrador Sanalia",
                 Correo = "admin@sanalia.local",
-                Contraseña = _hasher.Hash(ClaveAdmin),
+                Contraseña = _hasher.Hash(_credentials.AdminPassword),
                 Rol = RolUsuario.Administrador,
                 Activo = true
             },
@@ -48,7 +48,7 @@ public class DataSeeder(SanaliaDbContext db, IPasswordHasher hasher) : IDataSeed
             {
                 Nombre = "Asesor Demo",
                 Correo = "asesor@sanalia.local",
-                Contraseña = _hasher.Hash(ClaveAsesor),
+                Contraseña = _hasher.Hash(_credentials.AdvisorPassword),
                 Rol = RolUsuario.Asesor,
                 Activo = true
             });
@@ -129,6 +129,7 @@ public class DataSeeder(SanaliaDbContext db, IPasswordHasher hasher) : IDataSeed
 
     private async Task SeedDemoAsync(CancellationToken ct)
     {
+        _credentials.ValidateClient();
         var asesor = await _db.Asesores.FirstAsync(a => a.Rol == RolUsuario.Asesor, ct);
         var tipoVehiculos = await _db.TiposSeguro.FirstAsync(t => t.Nombre == "Vehículos", ct);
 
@@ -138,7 +139,7 @@ public class DataSeeder(SanaliaDbContext db, IPasswordHasher hasher) : IDataSeed
             DocumentoIdentidad = "00100000001",
             Telefono = "809-555-0201",
             Correo = "cliente1@demo.local",
-            Contraseña = _hasher.Hash(ClaveCliente)
+            Contraseña = _hasher.Hash(_credentials.ClientPassword)
         };
         var cliente2 = new Cliente
         {
@@ -146,7 +147,7 @@ public class DataSeeder(SanaliaDbContext db, IPasswordHasher hasher) : IDataSeed
             DocumentoIdentidad = "00100000002",
             Telefono = "809-555-0202",
             Correo = "cliente2@demo.local",
-            Contraseña = _hasher.Hash(ClaveCliente)
+            Contraseña = _hasher.Hash(_credentials.ClientPassword)
         };
 
         // Horarios: los próximos 5 días laborables, 4 franjas por día.

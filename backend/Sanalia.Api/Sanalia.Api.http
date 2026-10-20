@@ -1,6 +1,200 @@
 @Sanalia.Api_HostAddress = http://localhost:5099
+@clientToken = replace-with-client-jwt
+@advisorToken = replace-with-advisor-jwt
+@tipoId = 1
+@productoId = 1
+@horarioId = 1
+@solicitudId = 1
+@asesoriaId = 1
+@cotizacionId = 1
+@asistenciaId = 1
 
-GET {{Sanalia.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Register a client and receive a token
+POST {{Sanalia.Api_HostAddress}}/api/auth/register
+Content-Type: application/json
 
-###
+{
+  "nombre": "Ana Cliente",
+  "documentoIdentidad": "123456789",
+  "telefono": "555-0123",
+  "correo": "ana@example.com",
+  "contraseña": "CambiarEstaClave123"
+}
+
+### Sign in as a client
+# @name clientLogin
+POST {{Sanalia.Api_HostAddress}}/api/auth/login/cliente
+Content-Type: application/json
+
+{
+  "correo": "ana@example.com",
+  "contraseña": "CambiarEstaClave123"
+}
+
+# Replace the placeholder with DemoUsers:AdvisorPassword from User Secrets.
+POST {{Sanalia.Api_HostAddress}}/api/auth/login/asesor
+Content-Type: application/json
+
+{
+  "correo": "asesor@sanalia.local",
+  "contraseña": "replace-with-advisor-password-from-user-secrets"
+}
+
+### Get the current authenticated identity
+GET {{Sanalia.Api_HostAddress}}/api/auth/me
+Authorization: Bearer {{clientToken}}
+
+### List insurance types
+GET {{Sanalia.Api_HostAddress}}/api/catalog/tipos-seguro
+
+### List insurers
+GET {{Sanalia.Api_HostAddress}}/api/catalog/aseguradoras
+
+### List active products for an insurance type
+GET {{Sanalia.Api_HostAddress}}/api/catalog/tipos-seguro/{{tipoId}}/productos
+
+### Get a product and its coverages
+GET {{Sanalia.Api_HostAddress}}/api/catalog/productos/{{productoId}}
+
+### Find available slots (optionally add &asesorId=1)
+GET {{Sanalia.Api_HostAddress}}/api/horarios/disponibles?desde=2026-10-20
+
+### Publish a slot as the authenticated advisor
+POST {{Sanalia.Api_HostAddress}}/api/horarios
+Authorization: Bearer {{advisorToken}}
+Content-Type: application/json
+
+{
+  "fecha": "2026-10-23",
+  "horaInicio": "09:00:00",
+  "horaFin": "10:00:00"
+}
+
+### Create an advisory request as the authenticated client
+POST {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria
+Authorization: Bearer {{clientToken}}
+Content-Type: application/json
+
+{
+  "tipoId": {{tipoId}},
+  "horarioId": {{horarioId}},
+  "presupuesto": 250,
+  "descripcionNecesidad": "Busco cobertura para mi familia"
+}
+
+### List the current client's advisory requests
+GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria/mias
+Authorization: Bearer {{clientToken}}
+
+### Get a request as its owner or the advisor assigned to its slot
+GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria/{{solicitudId}}
+Authorization: Bearer {{clientToken}}
+
+### List pending advisory requests as an advisor or administrator
+GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria/pendientes
+Authorization: Bearer {{advisorToken}}
+
+### Compare insurance alternatives for the current client's request
+GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria/{{solicitudId}}/alternativas
+Authorization: Bearer {{clientToken}}
+
+### Confirm a request as an advisor/administrator
+PATCH {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria/{{solicitudId}}/estado
+Authorization: Bearer {{advisorToken}}
+Content-Type: application/json
+
+{
+  "estado": "Confirmada"
+}
+
+### Cancel a request as its client
+PATCH {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria/{{solicitudId}}/estado
+Authorization: Bearer {{clientToken}}
+Content-Type: application/json
+
+{
+  "estado": "Cancelada"
+}
+
+### Create an advisory session for a confirmed request
+POST {{Sanalia.Api_HostAddress}}/api/asesorias
+Authorization: Bearer {{advisorToken}}
+Content-Type: application/json
+
+{
+  "solicitudId": {{solicitudId}},
+  "fechaAsesoria": "2026-10-23T09:00:00-04:00",
+  "necesidadesIdentificadas": "Cobertura familiar",
+  "notas": "Seguimiento en dos semanas"
+}
+
+### View the current client's advisory history and quotes
+GET {{Sanalia.Api_HostAddress}}/api/asesorias/mias
+Authorization: Bearer {{clientToken}}
+
+### Create a quote (scores and recommendation are calculated by the server)
+POST {{Sanalia.Api_HostAddress}}/api/asesorias/{{asesoriaId}}/cotizaciones
+Authorization: Bearer {{advisorToken}}
+Content-Type: application/json
+
+{
+  "observaciones": "Alternativas según lo conversado",
+  "detalles": [
+    {
+      "productoId": {{productoId}},
+      "primaCotizada": 100
+    }
+  ]
+}
+
+### Read a quote as its client or assigned advisor
+GET {{Sanalia.Api_HostAddress}}/api/cotizaciones/{{cotizacionId}}
+Authorization: Bearer {{clientToken}}
+
+### Present a draft quote as its assigned advisor
+PATCH {{Sanalia.Api_HostAddress}}/api/cotizaciones/{{cotizacionId}}/estado
+Authorization: Bearer {{advisorToken}}
+Content-Type: application/json
+
+{
+  "estado": "Presentada"
+}
+
+### Accept a presented quote as its client
+PATCH {{Sanalia.Api_HostAddress}}/api/cotizaciones/{{cotizacionId}}/estado
+Authorization: Bearer {{clientToken}}
+Content-Type: application/json
+
+{
+  "estado": "Aceptada"
+}
+
+### Request assistance as the authenticated client
+POST {{Sanalia.Api_HostAddress}}/api/solicitudes-asistencia
+Authorization: Bearer {{clientToken}}
+Content-Type: application/json
+
+{
+  "motivo": "Necesito ayuda para entender una cobertura"
+}
+
+### List assistance requests submitted by the current client
+GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asistencia/mias
+Authorization: Bearer {{clientToken}}
+
+### List open assistance requests as an advisor or administrator
+GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asistencia/abiertas
+Authorization: Bearer {{advisorToken}}
+
+### Assign an assistance request to the authenticated advisor
+POST {{Sanalia.Api_HostAddress}}/api/solicitudes-asistencia/{{asistenciaId}}/asignacion
+Authorization: Bearer {{advisorToken}}
+
+### Resolve an assistance request assigned to the current advisor
+PATCH {{Sanalia.Api_HostAddress}}/api/solicitudes-asistencia/{{asistenciaId}}/estado
+Authorization: Bearer {{advisorToken}}
+Content-Type: application/json
+
+{
+  "estado": "Resuelta"
+}

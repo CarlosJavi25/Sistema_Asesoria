@@ -85,6 +85,16 @@ public sealed class SolicitudAsesoriaService(
         return solicitudes.GetByClienteAsync(idCliente, ct);
     }
 
+    public Task<SolicitudAsesoria?> GetByIdAsync(
+        int idSolicitud,
+        CancellationToken ct = default)
+    {
+        if (idSolicitud <= 0)
+            throw new ArgumentOutOfRangeException(nameof(idSolicitud));
+
+        return solicitudes.GetConDetalleAsync(idSolicitud, ct);
+    }
+
     public async Task<SolicitudAsesoria> CambiarEstadoAsync(
         int idSolicitud,
         EstadoSolicitudAsesoria nuevoEstado,

@@ -8,25 +8,29 @@ namespace Sanalia.Infrastructure.Services;
 public sealed class CotizacionService(
     IRepository<Asesoria> asesorias,
     IProductoSeguroRepository productos,
-    ICotizacionRepository cotizaciones) : ICotizacionService
+    ICotizacionRepository cotizaciones,
+    IProductoSeguroService comparador) : ICotizacionService
 {
     public async Task<Cotizacion> CrearAsync(
         int idAsesoria,
+        int idAsesor,
         IReadOnlyCollection<DetalleCotizacion> detalles,
         string? observaciones = null,
         CancellationToken ct = default)
     {
         if (idAsesoria <= 0)
             throw new ArgumentOutOfRangeException(nameof(idAsesoria));
+        if (idAsesor <= 0)
+            throw new ArgumentOutOfRangeException(nameof(idAsesor));
         ArgumentNullException.ThrowIfNull(detalles);
         if (detalles.Count == 0)
             throw new ArgumentException("La cotización debe incluir al menos un producto.", nameof(detalles));
-        if (detalles.Count(d => d.Recomendada) > 1)
-            throw new ArgumentException("Solo puede marcarse una alternativa como recomendada.", nameof(detalles));
+        var asesoria = await asesorias.GetByIdAsync(idAsesoria, ct)
+            ?? throw new KeyNotFoundException($"No existe la asesoría {idAsesoria}.");
+        if (asesoria.AsesorId != idAsesor)
+            throw new UnauthorizedAccessException("Solo el asesor asignado puede crear una cotización.");
 
-        if (await asesorias.GetByIdAsync(idAsesoria, ct) is null)
-            throw new KeyNotFoundException($"No existe la asesoría {idAsesoria}.");
-
+        var comparacion = await comparador.CompararAsync(asesoria.SolicitudId, ct);
         var idsProducto = new HashSet<int>();
         var alternativas = new List<DetalleCotizacion>(detalles.Count);
         foreach (var detalle in detalles)
@@ -44,22 +48,23 @@ public sealed class CotizacionService(
                 ?? throw new KeyNotFoundException($"No existe el producto {detalle.ProductoId}.");
             if (!producto.Vigente)
                 throw new InvalidOperationException($"El producto {producto.Id} no está vigente.");
+            var alternativaComparada = comparacion.FirstOrDefault(d => d.ProductoId == producto.Id)
+                ?? throw new InvalidOperationException(
+                    $"El producto {producto.Id} no es una alternativa vigente para la solicitud.");
 
             alternativas.Add(new DetalleCotizacion
             {
                 ProductoId = producto.Id,
                 Producto = producto,
                 PrimaCotizada = detalle.PrimaCotizada,
-                PuntajeCoincidencia = detalle.PuntajeCoincidencia,
-                Recomendada = detalle.Recomendada
+                PuntajeCoincidencia = alternativaComparada.PuntajeCoincidencia
             });
         }
 
-        if (alternativas.All(d => !d.Recomendada))
-            alternativas.OrderByDescending(d => d.PuntajeCoincidencia ?? 0m)
-                .ThenBy(d => d.PrimaCotizada)
-                .First()
-                .Recomendada = true;
+        alternativas.OrderByDescending(d => d.PuntajeCoincidencia ?? 0m)
+            .ThenBy(d => d.PrimaCotizada)
+            .First()
+            .Recomendada = true;
 
         var cotizacion = new Cotizacion
         {

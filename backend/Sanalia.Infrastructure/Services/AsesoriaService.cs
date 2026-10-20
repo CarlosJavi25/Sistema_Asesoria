@@ -11,7 +11,8 @@ public sealed class AsesoriaService(
     SanaliaDbContext db,
     ISolicitudAsesoriaRepository solicitudes,
     IAsesorRepository asesores,
-    IAsesoriaRepository asesorias) : IAsesoriaService
+    IAsesoriaRepository asesorias,
+    IHorarioDisponibleRepository horarios) : IAsesoriaService
 {
     public async Task<Asesoria> CrearAsync(
         int idSolicitud,
@@ -32,6 +33,12 @@ public sealed class AsesoriaService(
             ?? throw new KeyNotFoundException($"No existe la solicitud de asesoría {idSolicitud}.");
         if (solicitud.Estado != EstadoSolicitudAsesoria.Confirmada)
             throw new InvalidOperationException("Solo se pueden registrar asesorías de solicitudes confirmadas.");
+        var horario = solicitud.HorarioId.HasValue
+            ? await horarios.GetByIdAsync(solicitud.HorarioId.Value, ct)
+            : null;
+        if (horario is null || horario.AsesorId != idAsesor)
+            throw new UnauthorizedAccessException(
+                "Solo el asesor asignado al horario reservado puede registrar la asesoría.");
 
         var asesor = await asesores.GetByIdAsync(idAsesor, ct)
             ?? throw new KeyNotFoundException($"No existe el asesor {idAsesor}.");

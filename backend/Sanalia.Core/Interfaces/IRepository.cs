@@ -63,6 +63,8 @@ public interface ISolicitudAsesoriaRepository : IRepository<SolicitudAsesoria>
     /// <summary>Solicitudes pendientes con cliente, tipo y horario, de la más antigua a la más nueva.</summary>
     Task<IReadOnlyList<SolicitudAsesoria>> GetPendientesAsync(CancellationToken ct = default);
 
+    Task<SolicitudAsesoria?> GetConDetalleAsync(int idSolicitud, CancellationToken ct = default);
+
     Task<IReadOnlyList<SolicitudAsesoria>> GetByClienteAsync(int idCliente, CancellationToken ct = default);
 }
 

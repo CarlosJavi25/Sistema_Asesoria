@@ -7,6 +7,7 @@ public interface ICotizacionService
 {
     Task<Cotizacion> CrearAsync(
         int idAsesoria,
+        int idAsesor,
         IReadOnlyCollection<DetalleCotizacion> detalles,
         string? observaciones = null,
         CancellationToken ct = default);
