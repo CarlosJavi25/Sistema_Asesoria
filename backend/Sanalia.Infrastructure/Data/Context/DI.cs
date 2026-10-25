@@ -22,8 +22,9 @@ public static class DI
         if (!db.Database.GetMigrations().Any())
         {
             throw new InvalidOperationException(
-                "No hay migraciones en Sanalia.Data. Créalas una vez con: " +
-                "dotnet ef migrations add Inicial --project src/Sanalia.Data --startup-project src/Sanalia.Api");
+                "No hay migraciones en Sanalia.Infrastructure. Créalas una vez desde backend con: " +
+                "dotnet tool restore && dotnet ef migrations add Inicial " +
+                "--project Sanalia.Infrastructure --startup-project Sanalia.Api");
         }
 
         await db.Database.MigrateAsync(ct);
@@ -37,7 +38,6 @@ public static class DI
 
     /// <summary>
     /// Registra el DbContext (SQLite), los repositorios, el hasher de contraseñas y el seeder.
-    /// Si no se pasa cadena de conexión, usa data/sanalia.db junto a la solución (ver DbPath).
     /// </summary>
 
     public static IServiceCollection AddSanaliaData(this IServiceCollection services, string? connectionString = null)
