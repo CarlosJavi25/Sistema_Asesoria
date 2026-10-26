@@ -95,6 +95,9 @@ internal static class ApiMappings
     private static ClienteSummaryResponse ToSummary(this Cliente cliente) =>
         new(cliente.Id, cliente.Nombre, cliente.Correo, cliente.Telefono);
 
+    public static ClienteResponse ToResponse(this Cliente cliente) =>
+        new(cliente.Id, cliente.Nombre, cliente.Correo, cliente.Telefono);
+
     private static DateTimeOffset UtcOffset(DateTime value) =>
         new(DateTime.SpecifyKind(value, DateTimeKind.Utc));
 }

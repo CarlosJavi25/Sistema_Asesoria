@@ -51,6 +51,9 @@ public sealed record ChangeSolicitudAsesoriaStateRequest
 /// <summary>Información de cliente apta para mostrar en operaciones del asesor.</summary>
 public sealed record ClienteSummaryResponse(int Id, string Nombre, string Correo, string Telefono);
 
+/// <summary>Datos de contacto de un cliente para el directorio del personal.</summary>
+public sealed record ClienteResponse(int Id, string Nombre, string Correo, string Telefono);
+
 /// <summary>Solicitud de asesoría y datos de agenda y tipo de seguro.</summary>
 public sealed record SolicitudAsesoriaResponse(
     int Id,

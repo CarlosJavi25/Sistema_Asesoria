@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Sanalia.Api.Contracts;
 using Sanalia.Core.Entities;
 using Sanalia.Core.Enums;
+using Sanalia.Core.Interfaces;
 using Sanalia.Infrastructure.Data.Context;
 
 namespace Sanalia.Tests;
@@ -45,6 +46,44 @@ public sealed class ApiIntegrationTests(ApiFactory factory) : IClassFixture<ApiF
         var currentUser = await client.GetFromJsonAsync<CurrentUserResponse>("/api/auth/me");
         Assert.NotNull(currentUser);
         Assert.Equal("cliente@example.com", currentUser.Correo);
+
+        var forbiddenCustomerDirectory = await client.GetAsync("/api/clientes");
+        Assert.Equal(HttpStatusCode.Forbidden, forbiddenCustomerDirectory.StatusCode);
+
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<SanaliaDbContext>();
+            var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+            db.Asesores.Add(new Asesor
+            {
+                Nombre = "Asesora de prueba",
+                Correo = "asesora@example.com",
+                Contraseña = hasher.Hash("AdvisorPass123!"),
+                Rol = RolUsuario.Asesor
+            });
+            await db.SaveChangesAsync();
+        }
+
+        var advisorLogin = await client.PostAsJsonAsync("/api/auth/login/asesor", new
+        {
+            correo = "asesora@example.com",
+            contraseña = "AdvisorPass123!"
+        });
+        Assert.Equal(HttpStatusCode.OK, advisorLogin.StatusCode);
+        using var advisorJson = JsonDocument.Parse(await advisorLogin.Content.ReadAsStringAsync());
+        Assert.Equal("Asesor", advisorJson.RootElement.GetProperty("rol").GetString());
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue(
+                "Bearer",
+                advisorJson.RootElement.GetProperty("accessToken").GetString());
+
+        var customerDirectory = await client.GetFromJsonAsync<List<ClienteResponse>>(
+            "/api/clientes?busqueda=Cliente%20de%20prueba");
+        Assert.NotNull(customerDirectory);
+        var listedCustomer = Assert.Single(customerDirectory);
+        Assert.Equal("Cliente de prueba", listedCustomer.Nombre);
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", registered.AccessToken);
 
         var missingRequest = await client.GetAsync("/api/solicitudes-asesoria/999");
         Assert.Equal(HttpStatusCode.NotFound, missingRequest.StatusCode);
