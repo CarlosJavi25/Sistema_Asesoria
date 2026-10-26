@@ -141,14 +141,14 @@ p {
 
 .brand-copy small {
   color: #c3cbd0;
-  font-size: 9px;
+  font-size: 10px;
   letter-spacing: 1.4px;
 }
 
 .nav-section-label {
   padding: 10px 12px 11px;
   color: #7f8c95;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.35px;
 }
@@ -167,7 +167,7 @@ p {
   color: #b9c2c8;
   border: 1px solid transparent;
   border-radius: 7px;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   transition: color 150ms ease, background 150ms ease;
 }
@@ -191,7 +191,7 @@ p {
   padding: 17px 13px 25px;
   color: #d6dce0;
   font-family: Manrope, sans-serif;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.7;
 }
 
@@ -238,7 +238,7 @@ p {
 .avatar {
   width: 34px;
   height: 34px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .user-copy {
@@ -252,14 +252,14 @@ p {
 .user-copy strong {
   overflow: hidden;
   color: #f6f7f8;
-  font-size: 11px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .user-copy small {
   color: #9ca8b0;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .app-main {
@@ -282,7 +282,7 @@ p {
   align-items: center;
   gap: 11px;
   color: #8c969d;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .breadcrumb span:last-child {
@@ -296,7 +296,7 @@ p {
 
 .topbar-date {
   color: #89939a;
-  font-size: 11px;
+  font-size: 12px;
   text-transform: capitalize;
 }
 
@@ -335,7 +335,7 @@ p {
 .eyebrow {
   margin-bottom: 8px;
   color: #9a8354;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.65px;
 }
@@ -344,7 +344,7 @@ p {
   margin: 0;
   color: #1d2a33;
   font-family: Manrope, sans-serif;
-  font-size: clamp(27px, 3vw, 34px);
+  font-size: clamp(29px, 3vw, 36px);
   font-weight: 700;
   letter-spacing: -1.1px;
   line-height: 1.2;
@@ -353,7 +353,7 @@ p {
 .page-description {
   margin: 9px 0 0;
   color: #808b92;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .stats-grid {
@@ -399,7 +399,7 @@ p {
   grid-row: 1;
   align-self: center;
   color: #77838a;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
 }
 
@@ -407,14 +407,14 @@ p {
   margin: 15px 0 2px;
   color: #1e2d37;
   font-family: Manrope, sans-serif;
-  font-size: 29px;
+  font-size: 31px;
   font-weight: 700;
   grid-column: 1;
 }
 
 .stat-note {
   color: #a1a9ae;
-  font-size: 10px;
+  font-size: 11px;
   grid-column: 1;
 }
 
@@ -445,7 +445,7 @@ p {
   margin: 0;
   color: #27343d;
   font-family: Manrope, sans-serif;
-  font-size: 16px;
+  font-size: 18px;
   letter-spacing: -0.3px;
 }
 
@@ -454,7 +454,7 @@ p {
   align-items: center;
   gap: 7px;
   color: #8a754d;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -478,7 +478,7 @@ p {
 .activity-avatar {
   width: 32px;
   height: 32px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .activity-main {
@@ -490,14 +490,14 @@ p {
 
 .activity-main strong {
   color: #35424b;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .activity-main small,
 .activity-date {
   color: #929ca2;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .activity-date {
@@ -537,13 +537,13 @@ p {
 
 .welcome-strip strong {
   font-family: Manrope, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .welcome-strip p {
   margin: 4px 0 0;
   color: #b9c4ca;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .welcome-strip-link {
@@ -581,12 +581,12 @@ p {
 .directory-count strong {
   color: #26343e;
   font-family: Manrope, sans-serif;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 .directory-count span {
   color: #8a959c;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .directory-filters {
@@ -599,7 +599,7 @@ p {
 .search-form {
   display: flex;
   width: min(390px, 45vw);
-  height: 38px;
+  height: 40px;
   align-items: center;
   gap: 9px;
   padding: 0 5px 0 11px;
@@ -615,7 +615,7 @@ p {
   background: transparent;
   border: 0;
   outline: 0;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .search-form input::placeholder {
@@ -631,11 +631,11 @@ p {
   align-items: center;
   justify-content: center;
   gap: 9px;
-  min-height: 38px;
+  min-height: 40px;
   padding: 0 17px;
   border: 0;
   border-radius: 5px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   transition: background 150ms ease, opacity 150ms ease;
 }
@@ -664,19 +664,19 @@ p {
 }
 
 .search-button {
-  min-height: 28px;
+  min-height: 30px;
   padding: 0 11px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .filter-select {
-  height: 38px;
+  height: 40px;
   padding: 0 27px 0 10px;
   color: #64717a;
   background-color: #fff;
   border: 1px solid #e3e6e8;
   border-radius: 5px;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .table-scroll {
@@ -692,20 +692,21 @@ p {
 }
 
 .data-table th {
-  height: 41px;
-  padding: 0 18px;
+  height: 48px;
+  padding: 0 20px;
   color: #879198;
   background: #fbfbfb;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .data-table td {
-  height: 59px;
-  padding: 8px 18px;
+  height: 70px;
+  padding: 12px 20px;
   color: #64717a;
   border-top: 1px solid #f0f1f2;
-  font-size: 10px;
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .clickable-row {
@@ -720,47 +721,47 @@ p {
 .table-person {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   color: #394750;
 }
 
 .table-person > strong,
 .table-person-copy strong {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .table-avatar {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   background: #f0e7d4;
-  font-size: 9px;
+  font-size: 13px;
 }
 
 .table-person-copy {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
 }
 
 .table-person-copy small {
   color: #969fa5;
-  font-size: 9px;
+  font-size: 12.5px;
 }
 
 .reference-id {
   color: #9ba4a9;
-  font-size: 9px;
+  font-size: 12.5px;
   letter-spacing: 0.3px;
 }
 
 .status-badge {
   display: inline-flex;
-  min-height: 22px;
+  min-height: 26px;
   align-items: center;
-  padding: 0 8px;
+  padding: 0 10px;
   border-radius: 20px;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 600;
 }
 
@@ -785,10 +786,10 @@ p {
 }
 
 .table-footer {
-  padding: 13px 20px;
+  padding: 15px 20px;
   color: #929ca2;
   border-top: 1px solid #f0f1f2;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .empty-state {
@@ -810,7 +811,7 @@ p {
   border: 1px solid #d9c89f;
   border-radius: 11px 11px 14px 14px;
   font-family: Manrope, sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
 }
 
@@ -818,14 +819,14 @@ p {
   margin: 0 0 6px;
   color: #35434c;
   font-family: Manrope, sans-serif;
-  font-size: 13px;
+  font-size: 15px;
 }
 
 .empty-state p,
 .subtle-empty {
   margin: 0;
   color: #8a959c;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .subtle-empty {
@@ -840,7 +841,7 @@ p {
   justify-content: center;
   gap: 11px;
   color: #879198;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .spinner {
@@ -871,7 +872,7 @@ p {
   max-width: 520px;
   margin: 0;
   color: #7c5552;
-  font-size: 11px;
+  font-size: 12.5px;
   line-height: 1.6;
 }
 
@@ -881,7 +882,7 @@ p {
   gap: 7px;
   padding: 17px;
   color: #9aa3a8;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .app-footer span {
@@ -893,7 +894,7 @@ p {
   z-index: 10;
   top: 0;
   right: 0;
-  width: min(390px, 100vw);
+  width: min(410px, 100vw);
   height: 100vh;
   overflow-y: auto;
   padding: 29px;
@@ -917,7 +918,7 @@ p {
 .detail-avatar {
   width: 47px;
   height: 47px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .icon-button {
@@ -939,7 +940,7 @@ p {
   margin: 0 0 24px;
   color: #24323d;
   font-family: Manrope, sans-serif;
-  font-size: 21px;
+  font-size: 23px;
   letter-spacing: -0.5px;
 }
 
@@ -954,13 +955,13 @@ p {
 .detail-field > span:first-child,
 .detail-description > span {
   color: #919ba1;
-  font-size: 9px;
+  font-size: 10.5px;
 }
 
 .detail-field strong,
 .detail-field a {
   color: #3e4c55;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -972,7 +973,7 @@ p {
 .detail-description p {
   margin: 8px 0 0;
   color: #5f6c74;
-  font-size: 11px;
+  font-size: 12.5px;
   line-height: 1.6;
 }
 
@@ -985,7 +986,7 @@ p {
   color: #816d46;
   background: #f7f4ed;
   border-radius: 5px;
-  font-size: 10px;
+  font-size: 11.5px;
 }
 
 .login-page {
@@ -1052,7 +1053,7 @@ p {
   max-width: 350px;
   margin: 0;
   color: #c0cbd1;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.8;
 }
 
@@ -1062,7 +1063,7 @@ p {
   margin: 0;
   color: #d1d9dd;
   font-family: Manrope, sans-serif;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .login-form-panel {
@@ -1095,7 +1096,7 @@ p {
 .login-form-heading > p:last-child {
   margin: 0;
   color: #879199;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .login-form {
@@ -1106,19 +1107,19 @@ p {
 .login-form label {
   margin: 16px 0 7px;
   color: #36434c;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .login-form input {
   width: 100%;
-  height: 45px;
+  height: 47px;
   padding: 0 13px;
   color: #2d3b44;
   background: #fff;
   border: 1px solid #e1e5e7;
   border-radius: 5px;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .login-form input::placeholder {
@@ -1133,7 +1134,7 @@ p {
 .form-error {
   margin: 13px 0 0;
   color: var(--red);
-  font-size: 10px;
+  font-size: 11.5px;
   line-height: 1.5;
 }
 
@@ -1141,13 +1142,13 @@ p {
   width: 100%;
   min-height: 46px;
   margin-top: 24px;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .login-support {
   margin: 23px 0 0;
   color: #929ba1;
-  font-size: 10px;
+  font-size: 11.5px;
   text-align: center;
 }
 
@@ -1160,7 +1161,7 @@ p {
   align-self: center;
   margin: 20px 0 0;
   color: #9da6ab;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 @media (min-width: 1500px) {
@@ -1229,7 +1230,7 @@ p {
   }
 
   .brand-copy small {
-    font-size: 8px;
+    font-size: 9px;
   }
 
   .nav-section-label,
@@ -1248,7 +1249,7 @@ p {
     justify-content: center;
     gap: 7px;
     padding: 0 6px;
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .nav-link svg {
@@ -1266,7 +1267,7 @@ p {
   }
 
   .topbar-date {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .mobile-logout {
@@ -1289,7 +1290,7 @@ p {
 
   .page-description {
     max-width: 480px;
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1.6;
   }
 
@@ -1324,7 +1325,7 @@ p {
     grid-column: 3;
     grid-row: 1 / span 2;
     margin: 0 4px 0 12px;
-    font-size: 25px;
+    font-size: 27px;
   }
 
   .stat-note {
@@ -1343,12 +1344,12 @@ p {
   }
 
   .card-heading h2 {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .text-link {
     padding-top: 2px;
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .activity-row {
@@ -1360,7 +1361,7 @@ p {
   }
 
   .activity-main small {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .welcome-strip {
@@ -1369,7 +1370,7 @@ p {
   }
 
   .welcome-strip p {
-    font-size: 9px;
+    font-size: 10px;
     line-height: 1.5;
   }
 
@@ -1393,13 +1394,13 @@ p {
   }
 
   .data-table {
-    min-width: 650px;
+    min-width: 720px;
   }
 
   .data-table th,
   .data-table td {
-    padding-right: 12px;
-    padding-left: 12px;
+    padding-right: 14px;
+    padding-left: 14px;
   }
 
   .login-page {
@@ -1423,11 +1424,11 @@ p {
   }
 
   .login-brand-message > p:last-child {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .login-brand-footer {
-    font-size: 9px;
+    font-size: 10px;
   }
 
   .login-form-panel {
@@ -1440,7 +1441,7 @@ p {
   }
 
   .login-form-heading h2 {
-    font-size: 23px;
+    font-size: 25px;
   }
 
   .app-footer {
