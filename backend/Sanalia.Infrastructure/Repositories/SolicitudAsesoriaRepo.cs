@@ -18,6 +18,17 @@ public class SolicitudAsesoriaRepository(SanaliaDbContext db) : Repository<Solic
             .OrderBy(s => s.FechaSolicitud)
             .ToListAsync(ct);
 
+    public async Task<IReadOnlyList<SolicitudAsesoria>> GetOperativasAsync(CancellationToken ct = default) =>
+        await Set.AsNoTracking()
+            .Include(s => s.Cliente)
+            .Include(s => s.TipoSeguro)
+            .Include(s => s.Horario)
+                .ThenInclude(h => h!.Asesor)
+            .Where(s => s.Estado == EstadoSolicitudAsesoria.Pendiente
+                     || s.Estado == EstadoSolicitudAsesoria.Confirmada)
+            .OrderBy(s => s.FechaSolicitud)
+            .ToListAsync(ct);
+
     public Task<SolicitudAsesoria?> GetConDetalleAsync(int idSolicitud, CancellationToken ct = default) =>
         Set.AsNoTracking()
             .Include(s => s.Cliente)

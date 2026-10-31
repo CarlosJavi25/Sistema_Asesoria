@@ -65,6 +65,7 @@ public static class DI
         services.AddScoped<IDataSeeder, DataSeeder>();
 
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IClienteService, ClienteService>();
         services.AddScoped<IProductoSeguroService, ProductoSeguroService>();
         services.AddScoped<IHorarioDisponibleService, HorarioDisponibleService>();
         services.AddScoped<ISolicitudAsesoriaService, SolicitudAsesoriaService>();

@@ -13,8 +13,21 @@ namespace Sanalia.Api.Controllers;
 [ApiController]
 [Route("api")]
 [Produces("application/json")]
-public sealed class CotizacionesController(ICotizacionService cotizaciones) : ControllerBase
+public sealed class CotizacionesController(
+    ICotizacionService cotizaciones,
+    IAsesoriaService asesorias) : ControllerBase
 {
+    [Authorize(Roles = JwtRoles.Personal)]
+    [HttpGet("cotizaciones/mias")]
+    [ProducesResponseType<IReadOnlyList<CotizacionSummaryResponse>>(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<CotizacionSummaryResponse>>> GetMine(
+        CancellationToken cancellationToken)
+    {
+        int? asesorId = User.IsInRole(JwtRoles.Administrador) ? null : GetUserId();
+        var results = await cotizaciones.GetByAsesorAsync(asesorId, cancellationToken);
+        return Ok(results.Select(cotizacion => cotizacion.ToSummaryResponse()).ToArray());
+    }
+
     [Authorize(Roles = JwtRoles.Personal)]
     [HttpPost("asesorias/{asesoriaId:int}/cotizaciones")]
     [ProducesResponseType<CotizacionResponse>(StatusCodes.Status201Created)]
@@ -32,9 +45,17 @@ public sealed class CotizacionesController(ICotizacionService cotizaciones) : Co
             ProductoId = d.ProductoId,
             PrimaCotizada = d.PrimaCotizada
         }).ToArray();
+        var advisorId = GetUserId();
+        if (User.IsInRole(JwtRoles.Administrador))
+        {
+            var advisory = await asesorias.GetByIdAsync(asesoriaId, cancellationToken)
+                ?? throw new KeyNotFoundException($"No existe la asesoría {asesoriaId}.");
+            advisorId = advisory.AsesorId;
+        }
+
         var cotizacion = await cotizaciones.CrearAsync(
             asesoriaId,
-            GetUserId(),
+            advisorId,
             details,
             request.Observaciones,
             cancellationToken);

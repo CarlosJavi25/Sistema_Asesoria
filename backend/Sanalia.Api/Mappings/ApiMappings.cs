@@ -75,6 +75,9 @@ internal static class ApiMappings
             asesoria.Notas,
             asesoria.Cotizaciones.Select(ToResponse).ToArray());
 
+    public static AsesoriaSummaryResponse ToSummaryResponse(this Asesoria asesoria) =>
+        new(asesoria.ToResponse(), asesoria.Cliente.Nombre, asesoria.Solicitud.TipoSeguro.Nombre);
+
     public static CotizacionResponse ToResponse(this Cotizacion cotizacion) =>
         new(
             cotizacion.Id,
@@ -83,6 +86,12 @@ internal static class ApiMappings
             cotizacion.Estado,
             cotizacion.Observaciones,
             cotizacion.Detalles.Select(ToResponse).ToArray());
+
+    public static CotizacionSummaryResponse ToSummaryResponse(this Cotizacion cotizacion) =>
+        new(
+            cotizacion.ToResponse(),
+            cotizacion.Asesoria.Cliente.Nombre,
+            cotizacion.Asesoria.Solicitud.TipoSeguro.Nombre);
 
     public static AlternativaSeguroResponse ToResponse(this DetalleCotizacion detalle) =>
         new(
@@ -93,6 +102,9 @@ internal static class ApiMappings
             detalle.Producto.ToResponse());
 
     private static ClienteSummaryResponse ToSummary(this Cliente cliente) =>
+        new(cliente.Id, cliente.Nombre, cliente.Correo, cliente.Telefono);
+
+    public static ClienteResponse ToResponse(this Cliente cliente) =>
         new(cliente.Id, cliente.Nombre, cliente.Correo, cliente.Telefono);
 
     private static DateTimeOffset UtcOffset(DateTime value) =>

@@ -14,6 +14,7 @@ public interface ISolicitudAsesoriaService
         CancellationToken ct = default);
 
     Task<IReadOnlyList<SolicitudAsesoria>> GetPendientesAsync(CancellationToken ct = default);
+    Task<IReadOnlyList<SolicitudAsesoria>> GetOperativasAsync(CancellationToken ct = default);
     Task<IReadOnlyList<SolicitudAsesoria>> GetByClienteAsync(int idCliente, CancellationToken ct = default);
     Task<SolicitudAsesoria?> GetByIdAsync(int idSolicitud, CancellationToken ct = default);
     Task<SolicitudAsesoria> CambiarEstadoAsync(

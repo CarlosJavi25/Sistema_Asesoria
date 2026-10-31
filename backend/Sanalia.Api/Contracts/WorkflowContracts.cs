@@ -51,6 +51,9 @@ public sealed record ChangeSolicitudAsesoriaStateRequest
 /// <summary>Información de cliente apta para mostrar en operaciones del asesor.</summary>
 public sealed record ClienteSummaryResponse(int Id, string Nombre, string Correo, string Telefono);
 
+/// <summary>Datos de contacto de un cliente para el directorio del personal.</summary>
+public sealed record ClienteResponse(int Id, string Nombre, string Correo, string Telefono);
+
 /// <summary>Solicitud de asesoría y datos de agenda y tipo de seguro.</summary>
 public sealed record SolicitudAsesoriaResponse(
     int Id,
@@ -92,6 +95,12 @@ public sealed record AsesoriaResponse(
     string? Notas,
     IReadOnlyList<CotizacionResponse> Cotizaciones);
 
+/// <summary>Resumen de una asesoría para el espacio de trabajo del personal.</summary>
+public sealed record AsesoriaSummaryResponse(
+    AsesoriaResponse Asesoria,
+    string ClienteNombre,
+    string TipoSeguro);
+
 /// <summary>Datos de una alternativa seleccionada para una cotización.</summary>
 public sealed record CreateDetalleCotizacionRequest
 {
@@ -127,6 +136,12 @@ public sealed record CotizacionResponse(
     EstadoCotizacion Estado,
     string? Observaciones,
     IReadOnlyList<AlternativaSeguroResponse> Detalles);
+
+/// <summary>Resumen de una cotización para el espacio de trabajo del personal.</summary>
+public sealed record CotizacionSummaryResponse(
+    CotizacionResponse Cotizacion,
+    string ClienteNombre,
+    string TipoSeguro);
 
 /// <summary>Solicitud para recibir asistencia de un asesor.</summary>
 public sealed record CreateSolicitudAsistenciaRequest

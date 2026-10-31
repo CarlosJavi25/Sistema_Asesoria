@@ -75,6 +75,9 @@ public sealed class SolicitudAsesoriaService(
     public Task<IReadOnlyList<SolicitudAsesoria>> GetPendientesAsync(CancellationToken ct = default) =>
         solicitudes.GetPendientesAsync(ct);
 
+    public Task<IReadOnlyList<SolicitudAsesoria>> GetOperativasAsync(CancellationToken ct = default) =>
+        solicitudes.GetOperativasAsync(ct);
+
     public Task<IReadOnlyList<SolicitudAsesoria>> GetByClienteAsync(
         int idCliente,
         CancellationToken ct = default)

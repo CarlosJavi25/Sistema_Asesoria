@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Sanalia.Api.Contracts;
 using Sanalia.Core.Entities;
 using Sanalia.Core.Enums;
+using Sanalia.Core.Interfaces;
 using Sanalia.Infrastructure.Data.Context;
 
 namespace Sanalia.Tests;
@@ -46,6 +47,53 @@ public sealed class ApiIntegrationTests(ApiFactory factory) : IClassFixture<ApiF
         Assert.NotNull(currentUser);
         Assert.Equal("cliente@example.com", currentUser.Correo);
 
+        var forbiddenCustomerDirectory = await client.GetAsync("/api/clientes");
+        Assert.Equal(HttpStatusCode.Forbidden, forbiddenCustomerDirectory.StatusCode);
+
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<SanaliaDbContext>();
+            var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+            db.Asesores.AddRange(
+                new Asesor
+                {
+                    Nombre = "Asesora de prueba",
+                    Correo = "asesora@example.com",
+                    Contraseña = hasher.Hash("AdvisorPass123!"),
+                    Rol = RolUsuario.Asesor
+                },
+                new Asesor
+                {
+                    Nombre = "Administrador de prueba",
+                    Correo = "admin@example.com",
+                    Contraseña = hasher.Hash("AdminPass123!"),
+                    Rol = RolUsuario.Administrador
+                });
+            await db.SaveChangesAsync();
+        }
+
+        var advisorLogin = await client.PostAsJsonAsync("/api/auth/login/asesor", new
+        {
+            correo = "asesora@example.com",
+            contraseña = "AdvisorPass123!"
+        });
+        Assert.Equal(HttpStatusCode.OK, advisorLogin.StatusCode);
+        using var advisorJson = JsonDocument.Parse(await advisorLogin.Content.ReadAsStringAsync());
+        Assert.Equal("Asesor", advisorJson.RootElement.GetProperty("rol").GetString());
+        var advisorToken = advisorJson.RootElement.GetProperty("accessToken").GetString();
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue(
+                "Bearer",
+                advisorToken);
+
+        var customerDirectory = await client.GetFromJsonAsync<List<ClienteResponse>>(
+            "/api/clientes?busqueda=Cliente%20de%20prueba");
+        Assert.NotNull(customerDirectory);
+        var listedCustomer = Assert.Single(customerDirectory);
+        Assert.Equal("Cliente de prueba", listedCustomer.Nombre);
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", registered.AccessToken);
+
         var missingRequest = await client.GetAsync("/api/solicitudes-asesoria/999");
         Assert.Equal(HttpStatusCode.NotFound, missingRequest.StatusCode);
         Assert.Equal("application/problem+json", missingRequest.Content.Headers.ContentType?.MediaType);
@@ -77,6 +125,151 @@ public sealed class ApiIntegrationTests(ApiFactory factory) : IClassFixture<ApiF
         Assert.Equal(HttpStatusCode.Created, assistance.StatusCode);
         using var assistanceJson = JsonDocument.Parse(await assistance.Content.ReadAsStringAsync());
         Assert.Equal("Pendiente", assistanceJson.RootElement.GetProperty("estado").GetString());
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", advisorToken);
+        var scheduleResponse = await client.PostAsJsonAsync("/api/horarios", new
+        {
+            fecha = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
+            horaInicio = "09:00:00",
+            horaFin = "10:00:00"
+        });
+        Assert.Equal(HttpStatusCode.Created, scheduleResponse.StatusCode);
+        using var scheduleJson = JsonDocument.Parse(await scheduleResponse.Content.ReadAsStringAsync());
+        var scheduleId = scheduleJson.RootElement.GetProperty("id").GetInt32();
+
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", registered.AccessToken);
+        var enquiryResponse = await client.PostAsJsonAsync("/api/solicitudes-asesoria", new
+        {
+            tipoId = 1,
+            horarioId = scheduleId,
+            presupuesto = 200,
+            descripcionNecesidad = "Protección familiar"
+        });
+        Assert.Equal(HttpStatusCode.Created, enquiryResponse.StatusCode);
+        using var enquiryJson = JsonDocument.Parse(await enquiryResponse.Content.ReadAsStringAsync());
+        var enquiryId = enquiryJson.RootElement.GetProperty("id").GetInt32();
+        var forbiddenComparison = await client.GetAsync(
+            $"/api/solicitudes-asesoria/{enquiryId}/comparador");
+        Assert.Equal(HttpStatusCode.Forbidden, forbiddenComparison.StatusCode);
+        var forbiddenOperationalList = await client.GetAsync("/api/solicitudes-asesoria/operativas");
+        Assert.Equal(HttpStatusCode.Forbidden, forbiddenOperationalList.StatusCode);
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", advisorToken);
+        var operationalResponse = await client.GetAsync("/api/solicitudes-asesoria/operativas");
+        Assert.Equal(HttpStatusCode.OK, operationalResponse.StatusCode);
+        using var operationalJson = JsonDocument.Parse(await operationalResponse.Content.ReadAsStringAsync());
+        Assert.Contains(
+            operationalJson.RootElement.EnumerateArray(),
+            request => request.GetProperty("id").GetInt32() == enquiryId);
+
+        var comparisonResponse = await client.GetAsync(
+            $"/api/solicitudes-asesoria/{enquiryId}/comparador");
+        Assert.Equal(HttpStatusCode.OK, comparisonResponse.StatusCode);
+        using var comparisonJson = JsonDocument.Parse(await comparisonResponse.Content.ReadAsStringAsync());
+        var comparison = Assert.Single(comparisonJson.RootElement.EnumerateArray().ToArray());
+        Assert.True(comparison.GetProperty("recomendada").GetBoolean());
+        var productId = comparison.GetProperty("productoId").GetInt32();
+
+        var confirmResponse = await client.PatchAsJsonAsync(
+            $"/api/solicitudes-asesoria/{enquiryId}/estado",
+            new { estado = "Confirmada" });
+        Assert.Equal(HttpStatusCode.OK, confirmResponse.StatusCode);
+
+        var futureAdvisoryResponse = await client.PostAsJsonAsync("/api/asesorias", new
+        {
+            solicitudId = enquiryId,
+            fechaAsesoria = DateTimeOffset.UtcNow.AddDays(1),
+            necesidadesIdentificadas = "Protección familiar"
+        });
+        Assert.Equal(HttpStatusCode.BadRequest, futureAdvisoryResponse.StatusCode);
+
+        var prematureAdvisoryResponse = await client.PostAsJsonAsync("/api/asesorias", new
+        {
+            solicitudId = enquiryId,
+            fechaAsesoria = DateTimeOffset.UtcNow,
+            necesidadesIdentificadas = "Protección familiar"
+        });
+        Assert.Equal(HttpStatusCode.Conflict, prematureAdvisoryResponse.StatusCode);
+
+        using (var scope = factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<SanaliaDbContext>();
+            var schedule = await db.Horarios.FindAsync(scheduleId);
+            Assert.NotNull(schedule);
+            schedule.Fecha = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1));
+            await db.SaveChangesAsync();
+        }
+
+        var advisoryResponse = await client.PostAsJsonAsync("/api/asesorias", new
+        {
+            solicitudId = enquiryId,
+            fechaAsesoria = DateTimeOffset.UtcNow,
+            necesidadesIdentificadas = "Protección familiar"
+        });
+        Assert.Equal(HttpStatusCode.Created, advisoryResponse.StatusCode);
+        using var advisoryJson = JsonDocument.Parse(await advisoryResponse.Content.ReadAsStringAsync());
+        var advisoryId = advisoryJson.RootElement.GetProperty("id").GetInt32();
+
+        var staffAdvisories = await client.GetAsync("/api/asesorias/personal");
+        Assert.Equal(HttpStatusCode.OK, staffAdvisories.StatusCode);
+        using var staffAdvisoriesJson = JsonDocument.Parse(await staffAdvisories.Content.ReadAsStringAsync());
+        Assert.Single(staffAdvisoriesJson.RootElement.EnumerateArray().ToArray());
+
+        var recoveredAdvisory = await client.GetFromJsonAsync<AsesoriaResponse>(
+            $"/api/asesorias/solicitud/{enquiryId}");
+        Assert.NotNull(recoveredAdvisory);
+        Assert.Equal(advisoryId, recoveredAdvisory.Id);
+
+        var quoteResponse = await client.PostAsJsonAsync(
+            $"/api/asesorias/{advisoryId}/cotizaciones",
+            new
+            {
+                detalles = new[] { new { productoId = productId, primaCotizada = 125 } },
+                observaciones = "Propuesta inicial"
+            });
+        Assert.Equal(HttpStatusCode.Created, quoteResponse.StatusCode);
+        using var quoteJson = JsonDocument.Parse(await quoteResponse.Content.ReadAsStringAsync());
+        var quoteId = quoteJson.RootElement.GetProperty("id").GetInt32();
+
+        var quoteSummariesResponse = await client.GetAsync("/api/cotizaciones/mias");
+        Assert.Equal(HttpStatusCode.OK, quoteSummariesResponse.StatusCode);
+        using var quoteSummariesJson = JsonDocument.Parse(
+            await quoteSummariesResponse.Content.ReadAsStringAsync());
+        var quoteSummary = Assert.Single(quoteSummariesJson.RootElement.EnumerateArray().ToArray());
+        Assert.Equal("Cliente de prueba", quoteSummary.GetProperty("clienteNombre").GetString());
+        Assert.Equal("Vida", quoteSummary.GetProperty("tipoSeguro").GetString());
+        Assert.Equal(quoteId, quoteSummary.GetProperty("cotizacion").GetProperty("id").GetInt32());
+
+        var presentQuote = await client.PatchAsJsonAsync(
+            $"/api/cotizaciones/{quoteId}/estado",
+            new { estado = "Presentada" });
+        Assert.Equal(HttpStatusCode.OK, presentQuote.StatusCode);
+
+        var adminLogin = await client.PostAsJsonAsync("/api/auth/login/asesor", new
+        {
+            correo = "admin@example.com",
+            contraseña = "AdminPass123!"
+        });
+        Assert.Equal(HttpStatusCode.OK, adminLogin.StatusCode);
+        using var adminJson = JsonDocument.Parse(await adminLogin.Content.ReadAsStringAsync());
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+            "Bearer",
+            adminJson.RootElement.GetProperty("accessToken").GetString());
+
+        var adminQuoteResults = await client.GetAsync("/api/cotizaciones/mias");
+        Assert.Equal(HttpStatusCode.OK, adminQuoteResults.StatusCode);
+        using var adminQuoteJson = JsonDocument.Parse(await adminQuoteResults.Content.ReadAsStringAsync());
+        Assert.Single(adminQuoteJson.RootElement.EnumerateArray().ToArray());
+
+        var adminCreatedQuote = await client.PostAsJsonAsync(
+            $"/api/asesorias/{advisoryId}/cotizaciones",
+            new
+            {
+                detalles = new[] { new { productoId = productId, primaCotizada = 130 } },
+                observaciones = "Propuesta creada por administración"
+            });
+        Assert.Equal(HttpStatusCode.Created, adminCreatedQuote.StatusCode);
 
         var duplicateRegistration = await client.PostAsJsonAsync("/api/auth/register", new
         {

@@ -72,6 +72,18 @@ public sealed class SolicitudesAsesoriaController(
         return Ok(pendientes.Select(s => s.ToResponse()).ToArray());
     }
 
+    [Authorize(Roles = JwtRoles.Personal)]
+    [HttpGet("operativas")]
+    [ProducesResponseType<IReadOnlyList<SolicitudAsesoriaResponse>>(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<SolicitudAsesoriaResponse>>> GetOperational(
+        CancellationToken cancellationToken)
+    {
+        var operational = await solicitudes.GetOperativasAsync(cancellationToken);
+        if (User.IsInRole(JwtRoles.Asesor) && !User.IsInRole(JwtRoles.Administrador))
+            operational = operational.Where(s => s.Horario?.AsesorId == GetUserId()).ToArray();
+        return Ok(operational.Select(s => s.ToResponse()).ToArray());
+    }
+
     [Authorize(Roles = JwtRoles.Cliente)]
     [HttpGet("{id:int}/alternativas")]
     [ProducesResponseType<IReadOnlyList<AlternativaSeguroResponse>>(StatusCodes.Status200OK)]
@@ -84,6 +96,20 @@ public sealed class SolicitudesAsesoriaController(
             .FirstOrDefault(s => s.Id == id)
             ?? throw new KeyNotFoundException($"No existe la solicitud de asesoría {id}.");
         var alternatives = await productos.CompararAsync(solicitud.Id, cancellationToken);
+        return Ok(alternatives.Select(a => a.ToResponse()).ToArray());
+    }
+
+    [Authorize(Roles = JwtRoles.Personal)]
+    [HttpGet("{id:int}/comparador")]
+    [ProducesResponseType<IReadOnlyList<AlternativaSeguroResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IReadOnlyList<AlternativaSeguroResponse>>> GetStaffAlternatives(
+        int id,
+        CancellationToken cancellationToken)
+    {
+        _ = await GetAuthorizedSolicitud(id, cancellationToken);
+        var alternatives = await productos.CompararAsync(id, cancellationToken);
         return Ok(alternatives.Select(a => a.ToResponse()).ToArray());
     }
 

@@ -62,6 +62,7 @@ public interface ISolicitudAsesoriaRepository : IRepository<SolicitudAsesoria>
 {
     /// <summary>Solicitudes pendientes con cliente, tipo y horario, de la más antigua a la más nueva.</summary>
     Task<IReadOnlyList<SolicitudAsesoria>> GetPendientesAsync(CancellationToken ct = default);
+    Task<IReadOnlyList<SolicitudAsesoria>> GetOperativasAsync(CancellationToken ct = default);
 
     Task<SolicitudAsesoria?> GetConDetalleAsync(int idSolicitud, CancellationToken ct = default);
 
@@ -78,10 +79,13 @@ public interface IAsesoriaRepository : IRepository<Asesoria>
 {
     /// <summary>Historial de un cliente (P8): asesorías con sus cotizaciones y alternativas, la más reciente primero.</summary>
     Task<IReadOnlyList<Asesoria>> GetHistorialPorClienteAsync(int idCliente, CancellationToken ct = default);
+    Task<Asesoria?> GetBySolicitudAsync(int idSolicitud, CancellationToken ct = default);
+    Task<IReadOnlyList<Asesoria>> GetByAsesorAsync(int? idAsesor, CancellationToken ct = default);
 }
 
 public interface ICotizacionRepository : IRepository<Cotizacion>
 {
     /// <summary>Una cotización con sus detalles, productos y aseguradoras.</summary>
     Task<Cotizacion?> GetConDetallesAsync(int idCotizacion, CancellationToken ct = default);
+    Task<IReadOnlyList<Cotizacion>> GetByAsesorAsync(int? idAsesor, CancellationToken ct = default);
 }
