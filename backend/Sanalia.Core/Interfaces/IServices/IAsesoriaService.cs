@@ -13,4 +13,7 @@ public interface IAsesoriaService
         CancellationToken ct = default);
 
     Task<IReadOnlyList<Asesoria>> GetHistorialPorClienteAsync(int idCliente, CancellationToken ct = default);
+    Task<Asesoria?> GetBySolicitudAsync(int idSolicitud, CancellationToken ct = default);
+    Task<Asesoria?> GetByIdAsync(int idAsesoria, CancellationToken ct = default);
+    Task<IReadOnlyList<Asesoria>> GetByAsesorAsync(int? idAsesor, CancellationToken ct = default);
 }

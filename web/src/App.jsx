@@ -5,6 +5,8 @@ import { LoginPage } from "./pages/auth/LoginPage";
 import { CustomersPage } from "./pages/CustomersPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { EnquiriesPage } from "./pages/EnquiriesPage";
+import { ComparatorPage } from "./pages/ComparatorPage";
+import { ContributionsPage } from "./pages/ContributionsPage";
 import { LoadingState } from "./components/ui/Feedback";
 
 function HomeRoute() {
@@ -24,6 +26,8 @@ export default function App() {
         <Route index element={<DashboardPage />} />
         <Route path="clientes" element={<CustomersPage />} />
         <Route path="solicitudes" element={<EnquiriesPage />} />
+        <Route path="comparador" element={<ComparatorPage />} />
+        <Route path="aportes" element={<ContributionsPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

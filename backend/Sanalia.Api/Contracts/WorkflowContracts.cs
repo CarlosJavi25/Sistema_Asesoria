@@ -95,6 +95,12 @@ public sealed record AsesoriaResponse(
     string? Notas,
     IReadOnlyList<CotizacionResponse> Cotizaciones);
 
+/// <summary>Resumen de una asesoría para el espacio de trabajo del personal.</summary>
+public sealed record AsesoriaSummaryResponse(
+    AsesoriaResponse Asesoria,
+    string ClienteNombre,
+    string TipoSeguro);
+
 /// <summary>Datos de una alternativa seleccionada para una cotización.</summary>
 public sealed record CreateDetalleCotizacionRequest
 {
@@ -130,6 +136,12 @@ public sealed record CotizacionResponse(
     EstadoCotizacion Estado,
     string? Observaciones,
     IReadOnlyList<AlternativaSeguroResponse> Detalles);
+
+/// <summary>Resumen de una cotización para el espacio de trabajo del personal.</summary>
+public sealed record CotizacionSummaryResponse(
+    CotizacionResponse Cotizacion,
+    string ClienteNombre,
+    string TipoSeguro);
 
 /// <summary>Solicitud para recibir asistencia de un asesor.</summary>
 public sealed record CreateSolicitudAsistenciaRequest

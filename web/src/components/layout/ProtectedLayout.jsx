@@ -7,6 +7,8 @@ const navigation = [
   { to: "/app", label: "Resumen", icon: "dashboard", end: true },
   { to: "/app/clientes", label: "Clientes", icon: "people" },
   { to: "/app/solicitudes", label: "Solicitudes", icon: "message" },
+  { to: "/app/comparador", label: "Comparador", icon: "compare" },
+  { to: "/app/aportes", label: "Aportes", icon: "quote" },
 ];
 
 export function ProtectedLayout() {

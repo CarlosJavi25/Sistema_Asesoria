@@ -13,6 +13,7 @@ public interface ICotizacionService
         CancellationToken ct = default);
 
     Task<Cotizacion?> GetConDetallesAsync(int idCotizacion, CancellationToken ct = default);
+    Task<IReadOnlyList<Cotizacion>> GetByAsesorAsync(int? idAsesor, CancellationToken ct = default);
     Task<Cotizacion> CambiarEstadoAsync(
         int idCotizacion,
         EstadoCotizacion nuevoEstado,

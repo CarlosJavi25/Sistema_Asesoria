@@ -8,6 +8,8 @@ const paths = {
   calendar: <><rect x="3" y="4" width="18" height="17" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></>,
   shield: <><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z" /><path d="m9 12 2 2 4-4" /></>,
   close: <><path d="m18 6-12 12M6 6l12 12" /></>,
+  compare: <><path d="M8 3H5a2 2 0 0 0-2 2v3" /><path d="M16 3h3a2 2 0 0 1 2 2v3" /><path d="M8 21H5a2 2 0 0 1-2-2v-3" /><path d="M16 21h3a2 2 0 0 0 2-2v-3" /><path d="M8 12h8" /><path d="m12 8 4 4-4 4" /></>,
+  quote: <><path d="M4 4h16v16H4z" /><path d="M8 9h8M8 13h8M8 17h4" /><path d="M8 4V2m8 2V2" /></>,
 }
 
 export function Icon({ name, size = 20, className = '' }) {

@@ -88,6 +88,14 @@ public sealed class CotizacionService(
         return cotizaciones.GetConDetallesAsync(idCotizacion, ct);
     }
 
+    public Task<IReadOnlyList<Cotizacion>> GetByAsesorAsync(int? idAsesor, CancellationToken ct = default)
+    {
+        if (idAsesor is <= 0)
+            throw new ArgumentOutOfRangeException(nameof(idAsesor));
+
+        return cotizaciones.GetByAsesorAsync(idAsesor, ct);
+    }
+
     public async Task<Cotizacion> CambiarEstadoAsync(
         int idCotizacion,
         EstadoCotizacion nuevoEstado,

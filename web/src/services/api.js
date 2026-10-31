@@ -75,8 +75,33 @@ export const customerService = {
 
 export const enquiryService = {
   getPending: (signal) => apiRequest('/api/solicitudes-asesoria/pendientes', { signal }),
+  getOperational: (signal) => apiRequest('/api/solicitudes-asesoria/operativas', { signal }),
+  getById: (id, signal) => apiRequest(`/api/solicitudes-asesoria/${id}`, { signal }),
+  getComparison: (id, signal) => apiRequest(`/api/solicitudes-asesoria/${id}/comparador`, { signal }),
+  changeState: (id, status) => apiRequest(`/api/solicitudes-asesoria/${id}/estado`, {
+    method: 'PATCH',
+    body: { estado: status },
+  }),
 }
 
 export const assistanceService = {
   getOpen: (signal) => apiRequest('/api/solicitudes-asistencia/abiertas', { signal }),
+}
+
+export const advisoryService = {
+  getByRequest: (id, signal) => apiRequest(`/api/asesorias/solicitud/${id}`, { signal }),
+  getMine: (signal) => apiRequest('/api/asesorias/personal', { signal }),
+  create: (body) => apiRequest('/api/asesorias', { method: 'POST', body }),
+}
+
+export const quoteService = {
+  getMine: (signal) => apiRequest('/api/cotizaciones/mias', { signal }),
+  create: (advisoryId, body) => apiRequest(`/api/asesorias/${advisoryId}/cotizaciones`, {
+    method: 'POST',
+    body,
+  }),
+  changeState: (id, status) => apiRequest(`/api/cotizaciones/${id}/estado`, {
+    method: 'PATCH',
+    body: { estado: status },
+  }),
 }

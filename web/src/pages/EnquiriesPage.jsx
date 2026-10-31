@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { enquiryService } from "../services/api";
+import { Link, useNavigate } from "react-router-dom";
+import { advisoryService, enquiryService } from "../services/api";
 import { DataTable } from "../components/ui/DataTable";
 import {
   EmptyState,
@@ -19,11 +20,14 @@ function formatDate(value) {
 }
 
 export function EnquiriesPage() {
+  const navigate = useNavigate();
   const [result, setResult] = useState({ key: null, data: [], error: "" });
   const [searchValue, setSearchValue] = useState("");
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
   const [selectedEnquiry, setSelectedEnquiry] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [actionError, setActionError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const isLoading = result.key !== reloadKey;
   const enquiries = result.data;
@@ -32,7 +36,7 @@ export function EnquiriesPage() {
   useEffect(() => {
     const controller = new AbortController();
     enquiryService
-      .getPending(controller.signal)
+      .getOperational(controller.signal)
       .then((data) => setResult({ key: reloadKey, data, error: "" }))
       .catch((requestError) => {
         if (requestError.name !== "AbortError") {
@@ -107,18 +111,56 @@ export function EnquiriesPage() {
     setSearch(searchValue.trim());
   }
 
+  function updateEnquiry(updatedEnquiry) {
+    setResult((current) => ({
+      ...current,
+      data: current.data.map((item) => item.id === updatedEnquiry.id ? updatedEnquiry : item),
+    }));
+    setSelectedEnquiry(updatedEnquiry);
+  }
+
+  async function confirmEnquiry() {
+    setIsUpdating(true);
+    setActionError("");
+    try {
+      const updatedEnquiry = await enquiryService.changeState(selectedEnquiry.id, "Confirmada");
+      updateEnquiry(updatedEnquiry);
+    } catch (requestError) {
+      setActionError(requestError.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
+  async function registerAdvisory() {
+    setIsUpdating(true);
+    setActionError("");
+    try {
+      await advisoryService.create({
+        solicitudId: selectedEnquiry.id,
+        fechaAsesoria: new Date().toISOString(),
+        necesidadesIdentificadas: selectedEnquiry.descripcionNecesidad,
+      });
+      navigate(`/app/comparador?solicitudId=${selectedEnquiry.id}`);
+    } catch (requestError) {
+      setActionError(requestError.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  }
+
   return (
     <>
       <PageHeader
         eyebrow="CADA SOLICITUD ES UNA OPORTUNIDAD"
         title="Solicitudes"
-        description="Da seguimiento a las solicitudes de asesoría que esperan atención."
+        description="Confirma las citas y registra las asesorías realizadas para preparar propuestas."
       />
       <section className="content-card directory-card">
         <div className="directory-toolbar">
           <div className="directory-count">
             <strong>{isLoading ? "—" : filteredEnquiries.length}</strong>
-            <span>solicitudes pendientes</span>
+            <span>solicitudes en seguimiento</span>
           </div>
           <div className="directory-filters">
             <form
@@ -175,12 +217,12 @@ export function EnquiriesPage() {
             title={
               enquiries.length
                 ? "No hay coincidencias"
-                : "No hay solicitudes pendientes"
+                : "No hay solicitudes en seguimiento"
             }
             description={
               enquiries.length
                 ? "Ajusta la búsqueda o el filtro para ver otros resultados."
-                : "Las nuevas solicitudes aparecerán aquí para que puedas darles seguimiento."
+                : "Las solicitudes pendientes y confirmadas aparecerán aquí para que puedas darles seguimiento."
             }
           />
         ) : (
@@ -250,10 +292,46 @@ export function EnquiriesPage() {
             <Icon name="calendar" size={18} />
             <span>
               {selectedEnquiry.horario?.fecha
-                ? `Horario reservado: ${selectedEnquiry.horario.fecha}`
+                ? `Cita: ${new Intl.DateTimeFormat("es-DO", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  }).format(new Date(`${selectedEnquiry.horario.fecha}T${selectedEnquiry.horario.horaInicio}-04:00`))}`
                 : "Pendiente de coordinar"}
             </span>
           </div>
+          {selectedEnquiry.estado === "Pendiente" && (
+            <button
+              className="button button-primary detail-action"
+              type="button"
+              onClick={confirmEnquiry}
+              disabled={isUpdating}
+            >
+              {isUpdating ? "Confirmando..." : "Confirmar solicitud"}
+            </button>
+          )}
+          {selectedEnquiry.estado === "Confirmada" && (
+            <button
+              className="button button-primary detail-action"
+              type="button"
+              onClick={registerAdvisory}
+              disabled={isUpdating}
+            >
+              {isUpdating ? "Registrando..." : "Registrar asesoría realizada"}
+              {!isUpdating && <Icon name="arrow" size={17} />}
+            </button>
+          )}
+          {selectedEnquiry.estado === "Confirmada" && (
+            <p className="advisory-waiting">
+              Registra la asesoría después de finalizar la cita para mantener actualizado su estado.
+            </p>
+          )}
+          {actionError && <p className="inline-alert detail-alert" role="alert">{actionError}</p>}
+          <Link
+            className="button button-secondary detail-action"
+            to={`/app/comparador?solicitudId=${selectedEnquiry.id}`}
+          >
+            Comparar alternativas <Icon name="arrow" size={17} />
+          </Link>
         </aside>
       )}
     </>

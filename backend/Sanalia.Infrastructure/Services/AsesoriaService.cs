@@ -28,6 +28,8 @@ public sealed class AsesoriaService(
             throw new ArgumentOutOfRangeException(nameof(idAsesor));
         if (fechaAsesoria == default)
             throw new ArgumentException("La fecha de asesoría es obligatoria.", nameof(fechaAsesoria));
+        if (fechaAsesoria > DateTime.UtcNow)
+            throw new ArgumentException("No se puede registrar una asesoría con fecha futura.", nameof(fechaAsesoria));
 
         var solicitud = await solicitudes.GetByIdAsync(idSolicitud, ct)
             ?? throw new KeyNotFoundException($"No existe la solicitud de asesoría {idSolicitud}.");
@@ -39,6 +41,11 @@ public sealed class AsesoriaService(
         if (horario is null || horario.AsesorId != idAsesor)
             throw new UnauthorizedAccessException(
                 "Solo el asesor asignado al horario reservado puede registrar la asesoría.");
+        var citaFinaliza = new DateTimeOffset(
+            horario.Fecha.ToDateTime(horario.HoraFin),
+            TimeSpan.FromHours(-4));
+        if (citaFinaliza > DateTimeOffset.UtcNow)
+            throw new InvalidOperationException("No se puede registrar una asesoría antes de finalizar la cita.");
 
         var asesor = await asesores.GetByIdAsync(idAsesor, ct)
             ?? throw new KeyNotFoundException($"No existe el asesor {idAsesor}.");
@@ -74,5 +81,29 @@ public sealed class AsesoriaService(
             throw new ArgumentOutOfRangeException(nameof(idCliente));
 
         return asesorias.GetHistorialPorClienteAsync(idCliente, ct);
+    }
+
+    public Task<Asesoria?> GetBySolicitudAsync(int idSolicitud, CancellationToken ct = default)
+    {
+        if (idSolicitud <= 0)
+            throw new ArgumentOutOfRangeException(nameof(idSolicitud));
+
+        return asesorias.GetBySolicitudAsync(idSolicitud, ct);
+    }
+
+    public Task<Asesoria?> GetByIdAsync(int idAsesoria, CancellationToken ct = default)
+    {
+        if (idAsesoria <= 0)
+            throw new ArgumentOutOfRangeException(nameof(idAsesoria));
+
+        return asesorias.GetByIdAsync(idAsesoria, ct);
+    }
+
+    public Task<IReadOnlyList<Asesoria>> GetByAsesorAsync(int? idAsesor, CancellationToken ct = default)
+    {
+        if (idAsesor is <= 0)
+            throw new ArgumentOutOfRangeException(nameof(idAsesor));
+
+        return asesorias.GetByAsesorAsync(idAsesor, ct);
     }
 }

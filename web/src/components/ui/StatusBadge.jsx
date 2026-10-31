@@ -5,10 +5,17 @@ const statuses = {
   Cancelada: 'neutral',
   EnProceso: 'info',
   Resuelta: 'success',
+  Borrador: 'neutral',
+  Presentada: 'info',
+  Aceptada: 'success',
+  Rechazada: 'neutral',
 }
 
 const labels = {
   EnProceso: 'En proceso',
+  Basico: 'Básico',
+  Intermedio: 'Intermedio',
+  Completo: 'Completo',
 }
 
 export function StatusBadge({ status }) {

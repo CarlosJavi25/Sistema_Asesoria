@@ -94,9 +94,17 @@ Authorization: Bearer {{clientToken}}
 GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria/pendientes
 Authorization: Bearer {{advisorToken}}
 
+### List pending and confirmed requests assigned to the authenticated advisor
+GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria/operativas
+Authorization: Bearer {{advisorToken}}
+
 ### Compare insurance alternatives for the current client's request
 GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria/{{solicitudId}}/alternativas
 Authorization: Bearer {{clientToken}}
+
+### Compare alternatives as the advisor assigned to the request
+GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria/{{solicitudId}}/comparador
+Authorization: Bearer {{advisorToken}}
 
 ### Confirm a request as an advisor/administrator
 PATCH {{Sanalia.Api_HostAddress}}/api/solicitudes-asesoria/{{solicitudId}}/estado
@@ -127,6 +135,18 @@ Content-Type: application/json
   "necesidadesIdentificadas": "Cobertura familiar",
   "notas": "Seguimiento en dos semanas"
 }
+
+### Recover the advisory session associated with a request as its assigned advisor
+GET {{Sanalia.Api_HostAddress}}/api/asesorias/solicitud/{{solicitudId}}
+Authorization: Bearer {{advisorToken}}
+
+### List quotes for the authenticated advisor (administrators see all quotes)
+GET {{Sanalia.Api_HostAddress}}/api/cotizaciones/mias
+Authorization: Bearer {{advisorToken}}
+
+### List completed advisories for the authenticated advisor (administrators see all)
+GET {{Sanalia.Api_HostAddress}}/api/asesorias/personal
+Authorization: Bearer {{advisorToken}}
 
 ### View the current client's advisory history and quotes
 GET {{Sanalia.Api_HostAddress}}/api/asesorias/mias
