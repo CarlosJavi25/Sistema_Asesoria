@@ -2,4 +2,5 @@
   <Project Path="Sanalia.Api/Sanalia.Api.csproj" />
   <Project Path="Sanalia.Core/Sanalia.Core.csproj" />
   <Project Path="Sanalia.Infrastructure/Sanalia.Infrastructure.csproj" />
+  <Project Path="Sanalia.Tests/Sanalia.Tests.csproj" />
 </Solution>

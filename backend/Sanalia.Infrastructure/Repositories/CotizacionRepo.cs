@@ -12,6 +12,12 @@ namespace Sanalia.Infrastructure.Repositories
                 .Include(c => c.Detalles)
                     .ThenInclude(d => d.Producto)
                         .ThenInclude(p => p.Aseguradora)
+                .Include(c => c.Detalles)
+                    .ThenInclude(d => d.Producto)
+                        .ThenInclude(p => p.TipoSeguro)
+                .Include(c => c.Detalles)
+                    .ThenInclude(d => d.Producto)
+                        .ThenInclude(p => p.Coberturas)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(c => c.Id == idCotizacion, ct);
     }

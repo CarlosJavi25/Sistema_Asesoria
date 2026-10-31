@@ -16,7 +16,6 @@ public class ClienteConfiguration : IEntityTypeConfiguration<Cliente>
         b.Property(x => x.Telefono).HasMaxLength(20).IsRequired();
         b.Property(x => x.Correo).HasMaxLength(100).IsRequired().UseCollation("NOCASE");
         b.Property(x => x.Contraseña).HasMaxLength(255).IsRequired();
-        b.Property(x => x.Presupuesto).HasConversion<double>();
 
         b.HasIndex(x => x.DocumentoIdentidad).IsUnique();
         b.HasIndex(x => x.Correo).IsUnique();
@@ -137,6 +136,7 @@ public class ClienteConfiguration : IEntityTypeConfiguration<Cliente>
             b.HasKey(x => x.Id);
 
             b.Property(x => x.Estado).HasConversion<string>().HasMaxLength(20);
+            b.Property(x => x.Presupuesto).HasConversion<double>();
 
             b.HasOne(x => x.Cliente)
                 .WithMany(c => c.SolicitudesAsesoria)
@@ -188,7 +188,7 @@ public class ClienteConfiguration : IEntityTypeConfiguration<Cliente>
         public void Configure(EntityTypeBuilder<Asesoria> b)
         {
             b.ToTable("asesoria");
-            b.HasKey(x => x.AsesorId);
+            b.HasKey(x => x.Id);
 
             // Una solicitud origina como máximo una asesoría (índice único sobre id_solicitud).
             b.HasOne(x => x.Solicitud)

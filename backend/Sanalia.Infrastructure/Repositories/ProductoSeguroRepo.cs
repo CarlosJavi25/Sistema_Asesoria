@@ -12,6 +12,7 @@ public class ProductoSeguroRepository(SanaliaDbContext db) : Repository<Producto
     public async Task<IReadOnlyList<ProductoSeguro>> GetVigentesPorTipoAsync(int idTipo, CancellationToken ct = default) =>
         await Set.AsNoTracking()
             .Include(p => p.Aseguradora)
+            .Include(p => p.TipoSeguro)
             .Include(p => p.Coberturas)
             .Where(p => p.Vigente && p.TipoId == idTipo)
             .AsSplitQuery()

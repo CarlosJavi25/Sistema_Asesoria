@@ -8,7 +8,6 @@ public class Cliente
     public string Telefono { get; set; } = string.Empty;
     public string Correo { get; set; } = string.Empty;
     public string Contraseña { get; set; } = string.Empty;
-    public decimal? Presupuesto { get; set; }
     public DateTime FechaRegistro { get; set; }
 
     public ICollection<SolicitudAsesoria> SolicitudesAsesoria { get; set; } = new List<SolicitudAsesoria>();
