@@ -73,6 +73,8 @@ public interface ISolicitudAsistenciaRepository : IRepository<SolicitudAsistenci
 {
     /// <summary>Asistencias que no están resueltas, con el cliente y el asesor asignado.</summary>
     Task<IReadOnlyList<SolicitudAsistencia>> GetAbiertasAsync(CancellationToken ct = default);
+    /// <summary>Todas las asistencias, con el cliente y el asesor asignado, de la más reciente a la más antigua.</summary>
+    Task<IReadOnlyList<SolicitudAsistencia>> GetTodasAsync(CancellationToken ct = default);
 }
 
 public interface IAsesoriaRepository : IRepository<Asesoria>

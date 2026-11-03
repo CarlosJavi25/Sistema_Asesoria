@@ -86,6 +86,19 @@ export const enquiryService = {
 
 export const assistanceService = {
   getOpen: (signal) => apiRequest('/api/solicitudes-asistencia/abiertas', { signal }),
+  getForStaff: (signal) => apiRequest('/api/solicitudes-asistencia/personal', { signal }),
+  assign: (id) => apiRequest(`/api/solicitudes-asistencia/${id}/asignacion`, { method: 'POST' }),
+  changeState: (id, status) => apiRequest(`/api/solicitudes-asistencia/${id}/estado`, {
+    method: 'PATCH',
+    body: { estado: status },
+  }),
+}
+
+export const insurerService = {
+  getAll: (signal) => apiRequest('/api/aseguradoras', { signal }),
+  create: (body) => apiRequest('/api/aseguradoras', { method: 'POST', body }),
+  update: (id, body) => apiRequest(`/api/aseguradoras/${id}`, { method: 'PUT', body }),
+  delete: (id) => apiRequest(`/api/aseguradoras/${id}`, { method: 'DELETE' }),
 }
 
 export const advisoryService = {

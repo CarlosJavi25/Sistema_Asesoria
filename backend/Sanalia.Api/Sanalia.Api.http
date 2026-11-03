@@ -1,6 +1,7 @@
 @Sanalia.Api_HostAddress = http://localhost:5099
 @clientToken = replace-with-client-jwt
 @advisorToken = replace-with-advisor-jwt
+@adminToken = replace-with-admin-jwt
 @tipoId = 1
 @productoId = 1
 @horarioId = 1
@@ -206,6 +207,10 @@ Authorization: Bearer {{clientToken}}
 GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asistencia/abiertas
 Authorization: Bearer {{advisorToken}}
 
+### List all assistance requests available to the authenticated staff member
+GET {{Sanalia.Api_HostAddress}}/api/solicitudes-asistencia/personal
+Authorization: Bearer {{advisorToken}}
+
 ### Assign an assistance request to the authenticated advisor
 POST {{Sanalia.Api_HostAddress}}/api/solicitudes-asistencia/{{asistenciaId}}/asignacion
 Authorization: Bearer {{advisorToken}}
@@ -218,3 +223,37 @@ Content-Type: application/json
 {
   "estado": "Resuelta"
 }
+
+### List insurers (administrator only)
+GET {{Sanalia.Api_HostAddress}}/api/aseguradoras
+Authorization: Bearer {{adminToken}}
+
+### Get one insurer (administrator only)
+GET {{Sanalia.Api_HostAddress}}/api/aseguradoras/1
+Authorization: Bearer {{adminToken}}
+
+### Create an insurer (administrator only)
+POST {{Sanalia.Api_HostAddress}}/api/aseguradoras
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "nombre": "Aseguradora de ejemplo",
+  "telefono": "809-555-0100",
+  "correoContacto": "contacto@aseguradora.example"
+}
+
+### Update an insurer (administrator only)
+PUT {{Sanalia.Api_HostAddress}}/api/aseguradoras/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "nombre": "Aseguradora actualizada",
+  "telefono": "809-555-0101",
+  "correoContacto": "contacto@aseguradora.example"
+}
+
+### Delete an insurer without associated products (administrator only)
+DELETE {{Sanalia.Api_HostAddress}}/api/aseguradoras/2
+Authorization: Bearer {{adminToken}}

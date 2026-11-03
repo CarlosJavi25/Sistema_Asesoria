@@ -66,6 +66,7 @@ public static class DI
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IClienteService, ClienteService>();
+        services.AddScoped<IAseguradoraService, AseguradoraService>();
         services.AddScoped<IProductoSeguroService, ProductoSeguroService>();
         services.AddScoped<IHorarioDisponibleService, HorarioDisponibleService>();
         services.AddScoped<ISolicitudAsesoriaService, SolicitudAsesoriaService>();

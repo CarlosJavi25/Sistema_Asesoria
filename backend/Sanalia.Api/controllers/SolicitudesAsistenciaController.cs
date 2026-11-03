@@ -49,6 +49,18 @@ public sealed class SolicitudesAsistenciaController(
     }
 
     [Authorize(Roles = JwtRoles.Personal)]
+    [HttpGet("personal")]
+    [ProducesResponseType<IReadOnlyList<SolicitudAsistenciaResponse>>(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<SolicitudAsistenciaResponse>>> GetAllForStaff(
+        CancellationToken cancellationToken)
+    {
+        var todas = await solicitudes.GetTodasAsync(cancellationToken);
+        if (User.IsInRole(JwtRoles.Asesor) && !User.IsInRole(JwtRoles.Administrador))
+            todas = todas.Where(s => s.AsesorId is null || s.AsesorId == GetUserId()).ToArray();
+        return Ok(todas.Select(s => s.ToResponse()).ToArray());
+    }
+
+    [Authorize(Roles = JwtRoles.Personal)]
     [HttpPost("{id:int}/asignacion")]
     [ProducesResponseType<SolicitudAsistenciaResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden)]

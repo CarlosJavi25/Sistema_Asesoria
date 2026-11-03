@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Sanalia.Core.Enums;
 
 namespace Sanalia.Api.Contracts;
@@ -7,6 +8,19 @@ public sealed record TipoSeguroResponse(int Id, string Nombre, string? Descripci
 
 /// <summary>Aseguradora que ofrece productos en el catálogo.</summary>
 public sealed record AseguradoraResponse(int Id, string Nombre, string? Telefono, string? CorreoContacto);
+
+/// <summary>Datos para registrar o actualizar una aseguradora.</summary>
+public sealed record SaveAseguradoraRequest
+{
+    [Required, StringLength(100)]
+    public required string Nombre { get; init; }
+
+    [StringLength(20)]
+    public string? Telefono { get; init; }
+
+    [EmailAddress, StringLength(100)]
+    public string? CorreoContacto { get; init; }
+}
 
 /// <summary>Detalle de una cobertura incluida en un producto.</summary>
 public sealed record CoberturaResponse(int Id, string Descripcion, decimal? Limite, string? Condiciones);

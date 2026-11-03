@@ -9,6 +9,7 @@ const navigation = [
   { to: "/app/solicitudes", label: "Solicitudes", icon: "message" },
   { to: "/app/comparador", label: "Comparador", icon: "compare" },
   { to: "/app/aportes", label: "Aportes", icon: "quote" },
+  { to: "/app/asistencia", label: "Asistencia", icon: "headset" },
 ];
 
 export function ProtectedLayout() {
@@ -41,7 +42,9 @@ export function ProtectedLayout() {
 
         <div className="nav-section-label">ESPACIO DE TRABAJO</div>
         <nav className="primary-nav" aria-label="Navegación principal">
-          {navigation.map((item) => (
+          {[...navigation, ...(user.rol === "Administrador"
+            ? [{ to: "/app/aseguradoras", label: "Aseguradoras", icon: "building" }]
+            : [])].map((item) => (
             <NavLink
               key={item.to}
               to={item.to}

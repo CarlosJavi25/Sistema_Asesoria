@@ -37,6 +37,9 @@ public sealed class SolicitudAsistenciaService(
     public Task<IReadOnlyList<SolicitudAsistencia>> GetAbiertasAsync(CancellationToken ct = default) =>
         solicitudes.GetAbiertasAsync(ct);
 
+    public Task<IReadOnlyList<SolicitudAsistencia>> GetTodasAsync(CancellationToken ct = default) =>
+        solicitudes.GetTodasAsync(ct);
+
     public Task<IReadOnlyList<SolicitudAsistencia>> GetByClienteAsync(
         int idCliente,
         CancellationToken ct = default)

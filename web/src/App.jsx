@@ -7,6 +7,8 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { EnquiriesPage } from "./pages/EnquiriesPage";
 import { ComparatorPage } from "./pages/ComparatorPage";
 import { ContributionsPage } from "./pages/ContributionsPage";
+import { AsistencePage } from "./pages/AsistencePage";
+import { InsurersPage } from "./pages/InsurersPage";
 import { LoadingState } from "./components/ui/Feedback";
 
 function HomeRoute() {
@@ -28,8 +30,22 @@ export default function App() {
         <Route path="solicitudes" element={<EnquiriesPage />} />
         <Route path="comparador" element={<ComparatorPage />} />
         <Route path="aportes" element={<ContributionsPage />} />
+        <Route path="asistencia" element={<AsistencePage />} />
+        <Route
+          path="aseguradoras"
+          element={(
+            <AdminRoute>
+              <InsurersPage />
+            </AdminRoute>
+          )}
+        />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
+}
+
+function AdminRoute({ children }) {
+  const { user } = useAuth();
+  return user?.rol === "Administrador" ? children : <Navigate to="/app" replace />;
 }
