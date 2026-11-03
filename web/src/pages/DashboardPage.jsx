@@ -80,7 +80,7 @@ export function DashboardPage() {
       value: data.assistance.length,
       note: "Casos por atender",
       icon: "shield",
-      to: "/app/solicitudes",
+      to: "/app/asistencia",
     },
   ];
   const recentEnquiries = [...data.enquiries]

@@ -10,6 +10,9 @@ const paths = {
   close: <><path d="m18 6-12 12M6 6l12 12" /></>,
   compare: <><path d="M8 3H5a2 2 0 0 0-2 2v3" /><path d="M16 3h3a2 2 0 0 1 2 2v3" /><path d="M8 21H5a2 2 0 0 1-2-2v-3" /><path d="M16 21h3a2 2 0 0 0 2-2v-3" /><path d="M8 12h8" /><path d="m12 8 4 4-4 4" /></>,
   quote: <><path d="M4 4h16v16H4z" /><path d="M8 9h8M8 13h8M8 17h4" /><path d="M8 4V2m8 2V2" /></>,
+  headset: <><path d="M3 14v-3a9 9 0 0 1 18 0v3" /><path d="M5 14h2a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H6a3 3 0 0 1-3-3v-1a3 3 0 0 1 2-3z" /><path d="M19 14h-2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1a3 3 0 0 0 3-3v-1a3 3 0 0 0-2-3z" /></>,
+  building: <><path d="M3 21h18" /><path d="M5 21V7l8-4v18" /><path d="M19 21V11l-6-4" /><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01" /></>,
+  plus: <><path d="M12 5v14M5 12h14" /></>,
 }
 
 export function Icon({ name, size = 20, className = '' }) {

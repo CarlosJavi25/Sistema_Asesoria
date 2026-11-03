@@ -2139,6 +2139,139 @@ p {
   .login-form-wrap {
     width: min(390px, 100%);
   }
+}
+
+.insurer-management {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 315px;
+  align-items: start;
+  gap: 18px;
+}
+
+.insurer-form-card {
+  padding: 21px;
+}
+
+.insurer-form-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.insurer-form-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  place-items: center;
+  color: #94723d;
+  background: #f5f0e7;
+  border-radius: 50%;
+}
+
+.insurer-form-heading .eyebrow {
+  margin: 0 0 5px;
+  font-size: 9px;
+}
+
+.insurer-form-heading h2 {
+  margin: 0;
+  color: #26343e;
+  font-family: Manrope, sans-serif;
+  font-size: 16px;
+}
+
+.insurer-form {
+  display: grid;
+  gap: 8px;
+}
+
+.insurer-form label {
+  margin-top: 7px;
+  color: #59666f;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.insurer-form input {
+  width: 100%;
+  min-width: 0;
+  height: 41px;
+  padding: 0 11px;
+  color: #33414a;
+  background: #fff;
+  border: 1px solid #e3e6e8;
+  border-radius: 5px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.insurer-form input:focus {
+  border-color: #c9a96a;
+  outline: 2px solid rgb(201 169 106 / 18%);
+}
+
+.insurer-form-actions,
+.insurer-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.insurer-form-actions {
+  margin-top: 16px;
+}
+
+.insurer-form-actions .button {
+  flex: 1;
+}
+
+.insurer-row-actions .button {
+  min-height: 31px;
+  padding: 0 9px;
+  font-size: 10px;
+}
+
+.insurer-delete-button {
+  color: #9c4545;
+  background: #faeeee;
+}
+
+.insurer-delete-button:hover:not(:disabled) {
+  background: #f5dddd;
+}
+
+.assistance-reason {
+  display: block;
+  max-width: 270px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+  .insurer-management {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+}
+
+@media (max-width: 760px) {
+  .insurer-management {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .insurer-form-card {
+    padding: 17px;
+  }
+
+  .insurer-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .insurer-row-actions {
+    flex-wrap: nowrap;
+  }
 
   .login-form-heading h2 {
     font-size: 25px;

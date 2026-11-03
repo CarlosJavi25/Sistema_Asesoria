@@ -15,5 +15,12 @@ namespace Sanalia.Infrastructure.Repositories
                 .Where(s => s.Estado != EstadoAsistencia.Resuelta)
                 .OrderBy(s => s.FechaSolicitud)
                 .ToListAsync(ct);
+
+        public async Task<IReadOnlyList<SolicitudAsistencia>> GetTodasAsync(CancellationToken ct = default) =>
+            await Set.AsNoTracking()
+                .Include(s => s.Cliente)
+                .Include(s => s.Asesor)
+                .OrderByDescending(s => s.FechaSolicitud)
+                .ToListAsync(ct);
     }
 }

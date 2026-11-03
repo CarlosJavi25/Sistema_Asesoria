@@ -91,6 +91,8 @@ public sealed class ApiIntegrationTests(ApiFactory factory) : IClassFixture<ApiF
         Assert.NotNull(customerDirectory);
         var listedCustomer = Assert.Single(customerDirectory);
         Assert.Equal("Cliente de prueba", listedCustomer.Nombre);
+        var advisorInsurers = await client.GetAsync("/api/aseguradoras");
+        Assert.Equal(HttpStatusCode.Forbidden, advisorInsurers.StatusCode);
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", registered.AccessToken);
 
@@ -124,9 +126,30 @@ public sealed class ApiIntegrationTests(ApiFactory factory) : IClassFixture<ApiF
         });
         Assert.Equal(HttpStatusCode.Created, assistance.StatusCode);
         using var assistanceJson = JsonDocument.Parse(await assistance.Content.ReadAsStringAsync());
+        var assistanceId = assistanceJson.RootElement.GetProperty("id").GetInt32();
         Assert.Equal("Pendiente", assistanceJson.RootElement.GetProperty("estado").GetString());
 
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", advisorToken);
+        var staffAssistanceResponse = await client.GetAsync("/api/solicitudes-asistencia/personal");
+        Assert.Equal(HttpStatusCode.OK, staffAssistanceResponse.StatusCode);
+        using var staffAssistance = JsonDocument.Parse(await staffAssistanceResponse.Content.ReadAsStringAsync());
+        Assert.Contains(staffAssistance.RootElement.EnumerateArray(), request =>
+            request.GetProperty("id").GetInt32() == assistanceId);
+        var assignedAssistance = await client.PostAsync(
+            $"/api/solicitudes-asistencia/{assistanceId}/asignacion", content: null);
+        Assert.Equal(HttpStatusCode.OK, assignedAssistance.StatusCode);
+        var resolvedAssistance = await client.PatchAsJsonAsync(
+            $"/api/solicitudes-asistencia/{assistanceId}/estado",
+            new { estado = "Resuelta" });
+        Assert.Equal(HttpStatusCode.OK, resolvedAssistance.StatusCode);
+        var allStaffAssistanceResponse = await client.GetAsync("/api/solicitudes-asistencia/personal");
+        Assert.Equal(HttpStatusCode.OK, allStaffAssistanceResponse.StatusCode);
+        using var allStaffAssistance = JsonDocument.Parse(
+            await allStaffAssistanceResponse.Content.ReadAsStringAsync());
+        Assert.Contains(allStaffAssistance.RootElement.EnumerateArray(), request =>
+            request.GetProperty("id").GetInt32() == assistanceId
+            && request.GetProperty("estado").GetString() == "Resuelta");
+
         var scheduleResponse = await client.PostAsJsonAsync("/api/horarios", new
         {
             fecha = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
@@ -261,6 +284,35 @@ public sealed class ApiIntegrationTests(ApiFactory factory) : IClassFixture<ApiF
         Assert.Equal(HttpStatusCode.OK, adminQuoteResults.StatusCode);
         using var adminQuoteJson = JsonDocument.Parse(await adminQuoteResults.Content.ReadAsStringAsync());
         Assert.Single(adminQuoteJson.RootElement.EnumerateArray().ToArray());
+
+        var adminInsurers = await client.GetFromJsonAsync<List<AseguradoraResponse>>("/api/aseguradoras");
+        Assert.NotNull(adminInsurers);
+        var insurer = await client.PostAsJsonAsync("/api/aseguradoras", new
+        {
+            nombre = "Aseguradora de administración",
+            telefono = "809-555-0110",
+            correoContacto = "contacto@admin-seguros.example"
+        });
+        Assert.Equal(HttpStatusCode.Created, insurer.StatusCode);
+        var createdInsurer = await insurer.Content.ReadFromJsonAsync<AseguradoraResponse>();
+        Assert.NotNull(createdInsurer);
+        Assert.Equal($"/api/aseguradoras/{createdInsurer.Id}", insurer.Headers.Location?.AbsolutePath);
+        var loadedInsurer = await client.GetFromJsonAsync<AseguradoraResponse>(
+            $"/api/aseguradoras/{createdInsurer.Id}");
+        Assert.Equal(createdInsurer.Nombre, loadedInsurer?.Nombre);
+        var updatedInsurer = await client.PutAsJsonAsync(
+            $"/api/aseguradoras/{createdInsurer.Id}",
+            new
+            {
+                nombre = "Aseguradora editada",
+                telefono = (string?)null,
+                correoContacto = "contacto@editada.example"
+            });
+        Assert.Equal(HttpStatusCode.OK, updatedInsurer.StatusCode);
+        var deleteLinkedInsurer = await client.DeleteAsync("/api/aseguradoras/1");
+        Assert.Equal(HttpStatusCode.Conflict, deleteLinkedInsurer.StatusCode);
+        var deleteInsurer = await client.DeleteAsync($"/api/aseguradoras/{createdInsurer.Id}");
+        Assert.Equal(HttpStatusCode.NoContent, deleteInsurer.StatusCode);
 
         var adminCreatedQuote = await client.PostAsJsonAsync(
             $"/api/asesorias/{advisoryId}/cotizaciones",
